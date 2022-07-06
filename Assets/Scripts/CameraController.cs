@@ -73,7 +73,7 @@ public class CameraController : MonoBehaviour
         yRotation = transform.eulerAngles.y;
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         var rotate = cameraActions.Camera.RotateCamera.ReadValue<Vector2>();
         var move = cameraActions.Camera.Movement.ReadValue<Vector2>();
@@ -84,8 +84,9 @@ public class CameraController : MonoBehaviour
         if (enableKeyboardControls)
             HandleKeyboardInput();
 
-        HandleMovement();
         CameraClamp();
+        HandleMovement();
+        Debug.Log(intendedPosition);
     }
 
     private void OnDrawGizmos()
@@ -137,9 +138,9 @@ public class CameraController : MonoBehaviour
                 var ray = cam.ScreenPointToRay(Input.mousePosition);
                 if (!plane.Raycast(ray, out var hit))
                     return;
-                                
+
                 dragCurrentPosition = ray.GetPoint(hit);
-                intendedPosition = transform.position + (dragStartPosition - dragCurrentPosition).normalized;
+                intendedPosition = transform.position + dragStartPosition - dragCurrentPosition;
             }
         }
 
@@ -166,9 +167,19 @@ public class CameraController : MonoBehaviour
             var ver = Input.GetAxisRaw("Vertical");
             var speed = movementSpeed;
 
-            if (enableBoosting && Input.GetKey(boostKey)) speed *= boostSpeedMultiplier;
-            if (ver != 0) intendedPosition += transform.forward * (Mathf.Sign(ver) * speed * Time.deltaTime);
-            if (hor != 0) intendedPosition += transform.right * (Mathf.Sign(hor) * speed * Time.deltaTime);
+            if (enableBoosting && Input.GetKey(boostKey))
+                speed *= boostSpeedMultiplier;
+            if (ver != 0)
+            {
+                intendedPosition += transform.forward * (Mathf.Sign(ver) * speed * Time.deltaTime);
+                CameraClampCorrection();
+            }
+
+            if (hor != 0)
+            {
+                intendedPosition += transform.right * (Mathf.Sign(hor) * speed * Time.deltaTime);
+                CameraClampCorrection();
+            }
         }
 
         // Rotation
@@ -180,13 +191,25 @@ public class CameraController : MonoBehaviour
 
     }
 
+    private void CameraClampCorrection()
+    {
+        if (minPosZ > intendedPosition.z)
+            intendedPosition.z = minPosZ;
+        if (maxPosZ < intendedPosition.z)
+            intendedPosition.z = maxPosZ;
+        if (minPosX > intendedPosition.x)
+            intendedPosition.x = minPosX;
+        if (maxPosX < intendedPosition.x)
+            intendedPosition.x = maxPosX;
+    }
+
     private void HandleMovement()
     {
         // Panning
         transform.position = Vector3.Lerp(transform.position, intendedPosition, Time.deltaTime * easeSpeed);
 
         // Rotation
-        if (clampVerticalRotation) 
+        if (clampVerticalRotation)
             xRotation = Mathf.Clamp(xRotation, minVerticalRotation, maxVerticalRotation);
 
         xRotRig.localRotation = Quaternion.Slerp(xRotRig.localRotation, Quaternion.Euler(xRotation, 0, 0), Time.deltaTime * easeSpeed);

@@ -170,12 +170,12 @@ MonoBehaviour:
   zoomSpeed: 6
   minZoom: 4
   maxZoom: 32
-  minPosX: -50
-  maxPosX: 200
+  minPosX: -150
+  maxPosX: 150
   minPosY: -50
   maxPosY: 200
   minPosZ: -60
-  maxPosZ: 40
+  maxPosZ: 60
 --- !u!4 &61701713
 Transform:
   m_ObjectHideFlags: 0
