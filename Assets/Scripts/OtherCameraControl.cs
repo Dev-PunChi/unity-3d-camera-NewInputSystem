@@ -10,10 +10,10 @@ public class OtherCameraControl : MonoBehaviour
     private InputAction movement;
 
     public float moveSpeed;
+    public float zoomSpeed;
     public float rotateSpeed;
 
     private Vector2 m_Rotation;
-
     private Vector3 m_Zoom;
 
     // Start is called before the first frame update
@@ -60,21 +60,16 @@ public class OtherCameraControl : MonoBehaviour
         if (direction.sqrMagnitude < 0.01)
             return;
         var scaledMoveSpeed = moveSpeed * Time.deltaTime;
-        // For simplicity's sake, we just keep movement in a single plane here. Rotate
-        // direction according to world Y rotation of player.
         var move = Quaternion.Euler(0, transform.eulerAngles.y, 0) * new Vector3(direction.x, 0, direction.y);
         transform.position += move * scaledMoveSpeed;
     }
 
     private void Zoom(Vector2 direction)
     {
-        if (Mathf.Abs(direction.y) > 0.1f)
-        {
-            transform.position += new Vector3(0, 0, -Mathf.Clamp(direction.y, 10f, 50f));
-        }
-        else if (Mathf.Abs(direction.y) < -0.1f)
-        {
-            transform.position += new Vector3(0, 0, Mathf.Clamp(direction.y, 10f, 50f));
-        }
+        if (direction.sqrMagnitude < 0.01)
+            return;
+        var scaledZoomSpeed = zoomSpeed * Time.deltaTime;
+        var zoom = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, transform.eulerAngles.z) * new Vector3(0, 0, direction.normalized.y);
+        transform.position += zoom * scaledZoomSpeed;
     }
 }
