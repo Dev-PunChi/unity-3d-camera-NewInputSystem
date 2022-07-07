@@ -84,9 +84,8 @@ public class CameraController : MonoBehaviour
         if (enableKeyboardControls)
             HandleKeyboardInput();
 
-        CameraClamp();
         HandleMovement();
-        Debug.Log(intendedPosition);
+        CameraClamp();
     }
 
     private void OnDrawGizmos()
@@ -138,9 +137,8 @@ public class CameraController : MonoBehaviour
                 var ray = cam.ScreenPointToRay(Input.mousePosition);
                 if (!plane.Raycast(ray, out var hit))
                     return;
-
                 dragCurrentPosition = ray.GetPoint(hit);
-                intendedPosition = transform.position + dragStartPosition - dragCurrentPosition;
+                intendedPosition = transform.position + dragStartPosition - dragCurrentPosition;              
             }
         }
 
@@ -174,7 +172,6 @@ public class CameraController : MonoBehaviour
                 intendedPosition += transform.forward * (Mathf.Sign(ver) * speed * Time.deltaTime);
                 CameraClampCorrection();
             }
-
             if (hor != 0)
             {
                 intendedPosition += transform.right * (Mathf.Sign(hor) * speed * Time.deltaTime);
@@ -183,11 +180,15 @@ public class CameraController : MonoBehaviour
         }
 
         // Rotation
-        if (enableHorizontalRotation && Input.GetKey(KeyCode.Q)) yRotation -= rotationSpeed * Time.deltaTime;
-        if (enableHorizontalRotation && Input.GetKey(KeyCode.E)) yRotation += rotationSpeed * Time.deltaTime;
+        if (enableHorizontalRotation && Input.GetKey(KeyCode.Q)) 
+            yRotation -= rotationSpeed * Time.deltaTime;
+        if (enableHorizontalRotation && Input.GetKey(KeyCode.E)) 
+            yRotation += rotationSpeed * Time.deltaTime;
 
-        if (enableVerticalRotation && Input.GetKey(KeyCode.R)) xRotation += rotationSpeed * Time.deltaTime;
-        if (enableVerticalRotation && Input.GetKey(KeyCode.F)) xRotation -= rotationSpeed * Time.deltaTime;
+        if (enableVerticalRotation && Input.GetKey(KeyCode.R)) 
+            xRotation += rotationSpeed * Time.deltaTime;
+        if (enableVerticalRotation && Input.GetKey(KeyCode.F)) 
+            xRotation -= rotationSpeed * Time.deltaTime;
 
     }
 

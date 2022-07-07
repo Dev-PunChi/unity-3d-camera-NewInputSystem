@@ -159,7 +159,7 @@ MonoBehaviour:
   enableVerticalRotation: 1
   enableZooming: 1
   enableBoosting: 1
-  easeSpeed: 1.74
+  easeSpeed: 8
   movementSpeed: 20
   boostSpeedMultiplier: 2
   boostKey: 304
